@@ -13,6 +13,12 @@ use Illuminate\Http\Request;
 |
 */
 
+
+
+
+Route::get('/home/', 'ApiController@home')->name('api.home');
+
+
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });

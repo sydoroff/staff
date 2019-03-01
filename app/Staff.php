@@ -3,16 +3,33 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use function PHPSTORM_META\map;
 
 class Staff extends Model
 {
+    /**
+     * @return App/Staff Возвращает начальника
+     */
     public function boss()
     {
         return $this->hasOne('App\Staff', 'id', 'up_num');
     }
 
+    /**
+     * @return App/Staff Возвращает подчиненных
+     */
     public function subject()
     {
         return $this->hasMany('App\Staff', 'up_num', 'id');
+    }
+
+    /**
+     * @param $id - начальник
+     * @return App/Staff с числом подчененных
+     */
+    static function childTreeJS($id){
+
+        return self::withCount('subject')->where('up_num',$id)->get();
+
     }
 }

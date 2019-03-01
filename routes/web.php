@@ -14,3 +14,6 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+
+Route::get('/table/', 'StaffController@index')->name('staff');
