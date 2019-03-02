@@ -10,7 +10,7 @@ class TableStaffSeeder extends Seeder
      *
      * @return void
      */
-    const COUNT_BRANCH = 5; // Стартовое количество сотрудников
+    const COUNT_BRANCH = 5; // Стартовое количество сотрудников и колмчество веток
     const MIN_COUNT_SUBJECT=8; //Минимальное количество генерируемых подчененных в отделе
     const MAX_COUNT_SUBJECT=12; //Максимальное количество генерируемых подчиненных в отделе
 
