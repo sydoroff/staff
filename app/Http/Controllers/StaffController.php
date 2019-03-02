@@ -11,6 +11,7 @@ class StaffController extends Controller
     public function index(Request $request){
 
         //===Разбираемся с кнопками и ссылками===//
+
         $sort = $request->get('sort');
         $set = $request->get('set');
 

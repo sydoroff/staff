@@ -25,7 +25,7 @@ class Staff extends Model
 
     /**
      * @param $id - начальник
-     * @return App/Staff с числом подчененных
+     * @return App/Staff с числом подчененных.
      */
     static function childTreeJS($id){
 

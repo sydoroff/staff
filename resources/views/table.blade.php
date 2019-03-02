@@ -16,7 +16,6 @@
         <tbody>
 
           @foreach($staff as $row)
-
            <tr>
             <th scope="row">{{$row->id}}</th>
             <td>{{$row->full_name}}</td>
