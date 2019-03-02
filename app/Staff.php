@@ -12,7 +12,7 @@ class Staff extends Model
      */
     public function boss()
     {
-        return $this->hasOne('App\Staff', 'id', 'up_num');
+        return $this->belongsTo('App\Staff', 'up_num', 'id');
     }
 
     /**
