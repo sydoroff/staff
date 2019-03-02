@@ -5,11 +5,11 @@
     <table class="table">
         <thead>
         <tr>
-            <th scope="col"># &or;  &and;	&#9660; 	&#9650;</th>
-            <th scope="col">Name<span class="glyphicon glyphicon-triangle-bottom"></span></th>
-            <th scope="col">Job Title</th>
-            <th scope="col">Pay</th>
-            <th scope="col">Boss</th>
+            <th scope="col"><a class="text-dark" href="{!!$sort['id']!!}"># {!! $set['id'] !!}</a></th>
+            <th scope="col"><a class="text-dark" href="{!!$sort['full_name']!!}">Name {!! $set['full_name'] !!}</a><span class="glyphicon glyphicon-triangle-bottom"></span></th>
+            <th scope="col"><a class="text-dark" href="{!!$sort['employment']!!}">Job Title {!! $set['employment'] !!}</a></th>
+            <th scope="col"><a class="text-dark" href="{!!$sort['pay']!!}">Pay {!! $set['pay'] !!}</a></th>
+            <th scope="col"><a class="text-dark" href="{!!$sort['boss']!!}">Boss {!! $set['boss'] !!}</a></th>
         </tr>
         </thead>
         <tbody>
