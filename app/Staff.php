@@ -7,6 +7,7 @@ use function PHPSTORM_META\map;
 
 class Staff extends Model
 {
+    protected $dates = ['employment'];
     /**
      * @return App/Staff Возвращает начальника
      */
