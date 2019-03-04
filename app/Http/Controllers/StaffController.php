@@ -10,10 +10,24 @@ class StaffController extends Controller
 
     public function index(Request $request){
 
+        $request->validate([
+            'id_from' => 'nullable|digits_between:1,8',
+            'id_to' => 'nullable|digits_between:1,8',
+            'full_name' => 'nullable|string|max:150',
+            'position' => 'nullable|string|max:150',
+            'employment_from' => 'nullable|date',
+            'employment_to' => 'nullable|date',
+            'pay_from' => 'nullable|digits_between:1,8',
+            'pay_to' => 'nullable|digits_between:1,8',
+            'boss_name' => 'nullable|string|max:150',
+            'sort'=>'in:id,full_name,position,employment,pay,boss_name',
+            'set'=>'in:asc,desc',
+        ]);
+
         $sort = $request->get('sort');
         $set = $request->get('set');
 
-        $staff = Staff::with('boss');
+        $staff = new Staff();
 
         //============ Делаем разные поиски =============//
 
@@ -23,9 +37,9 @@ class StaffController extends Controller
                 $staff = $staff->where('staff.id', '>', $request->get('id_from'));
             if (!empty(trim($request->get('id_to'))))
                 $staff = $staff->where('staff.id', '<', $request->get('id_to'));
-            if (strlen(trim($request->get('full_name')))>3)
+            if (strlen(trim($request->get('full_name')))>1)
                 $staff = $staff->where('staff.full_name', 'like', '%' . str_replace(' ', '%%', trim($request->get('full_name'))) . '%');
-            if (strlen(trim($request->get('position')))>3)
+            if (strlen(trim($request->get('position')))>1)
                 $staff = $staff->where('staff.position', 'like', '%' . str_replace(' ', '%%', trim($request->get('position'))) . '%');
             if (!empty(trim($request->get('employment_from'))))
                 $staff = $staff->whereDate('staff.employment', '>', $request->get('employment_from'));
@@ -35,44 +49,17 @@ class StaffController extends Controller
                 $staff = $staff->where('staff.pay', '>', $request->get('pay_from'));
             if (!empty(trim($request->get('pay_to'))))
                 $staff = $staff->where('staff.pay', '<', $request->get('pay_to'));
-            if (strlen(trim($request->get('boss')))>3){  // босс сортируется до поиска
+            if (strlen(trim($request->get('boss_name')))>1)
+                $staff = $staff->where('staff.boss_name', 'like', '%' . str_replace(' ', '%%', trim($request->get('boss_name'))) . '%');
 
-                    $boss = \DB::table('staff')
-                        ->select('staff.id')
-                        ->join('staff as st', 'staff.up_num', '=', 'st.id')
-                        ->where('st.full_name', 'like', '%'.str_replace(' ', '%%', trim($request->get('boss'))).'%');
-                    if ($sort=='boss')
-                        $boss->orderBy('st.full_name',$set);
-
-                    $staff = $staff->joinSub($boss,'boss',function ($join){
-                        $join->on('staff.id', '=', 'boss.id');
-                    });
-            }
         }
 
         //================ Делаем сортировки ===============//
 
-        if (strlen(trim($request->get('boss')))<4&&$sort==='boss'){
-
-            $boss = \DB::table('staff')
-                ->select('staff.id')
-                ->join('staff as st', 'staff.up_num', '=', 'st.id')
-                ->orderBy('st.full_name',$set);
-
-            $staff = $staff->joinSub($boss,'boss',function ($join){
-                $join->on('staff.id', '=', 'boss.id');
-            });
-
-        }else{
-
             if(!empty($sort)&&!empty($set)&&$sort!='boss')
                 $staff=$staff->orderBy('staff.'.$sort,$set);
 
-
-
-        }
-
-        //===========================================//
+        //==================================================//
 
         $staff=$staff->paginate(50);
 
@@ -105,7 +92,7 @@ class StaffController extends Controller
             'position' =>   ['ico'=>Null,'a_d'=>'asc','url'=>''],
             'employment' => ['ico'=>Null,'a_d'=>'asc','url'=>''],
             'pay' =>        ['ico'=>Null,'a_d'=>'asc','url'=>''],
-            'boss' =>       ['ico'=>Null,'a_d'=>'asc','url'=>'']
+            'boss_name' =>       ['ico'=>Null,'a_d'=>'asc','url'=>'']
         ];
 
         if ($set=='asc')
