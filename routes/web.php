@@ -15,5 +15,5 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-
+Route::view('/table/ajax/','table-ajax')->name('staff.ajax');
 Route::get('/table/', 'StaffController@index')->name('staff');

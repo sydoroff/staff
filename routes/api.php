@@ -15,7 +15,7 @@ use Illuminate\Http\Request;
 
 
 
-
+Route::get('/table/', 'ApiController@table')->name('api.table');
 Route::get('/home/', 'ApiController@home')->name('api.home');
 
 

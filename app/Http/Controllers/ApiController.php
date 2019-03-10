@@ -13,20 +13,32 @@ class ApiController extends Controller
         $request->validate([
             'id' => 'required|integer',
         ]);
-
         $id = $request->get('id');
-
         $staff=Staff::childTreeJS($id)->map(function ($item, $key){
-            $child = ($item->subject_count>0) ? [true,'<sup> sub.'.$item->subject_count.'</sup>']: [false,''];
             return [
                 'id'=>$item->id,
-                'text'=>'<b>'.$item->full_name.'</b>. <span class="text-success">Post: </span><i><u>'.
-                        $item->position.'</u></i>'.$child[1].'. <span class="text-success">Working start:</span> '.
-                        $item->employment.'. <span class="text-success">Pay:</span> '.$item->pay.'$',
-                'children' => $child[0]
+                'text'=> view('tree-item',['item' => $item])->render(),
+                'children' => ($item->subject_count>0)
             ];
         });
 
         return Response::json($staff->toArray());
+    }
+
+    public function table(Request $request){
+
+        $staff = new Staff();
+        $request->validate($staff->valid);
+        $staff = $staff->make_search($request->only(['full_name','position','boss_name',
+                                                     'id_from','employment_from','pay_from',
+                                                     'id_to','employment_to','pay_to']));
+
+        $staff = $staff->make_sort($request->only(['sort','set']));
+        $staff = $staff->paginate(50);
+        $staff = $staff->appends($request->except(['page']));
+        $staff = $staff->toArray();
+        $staff['search_sort_param'] = $request->except(['page']);
+      // dd( $request->except(['page']));
+        return  Response::json($staff);
     }
 }

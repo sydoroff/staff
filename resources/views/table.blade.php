@@ -32,7 +32,7 @@
                                              <input  name="pay_to"          value="{{ $form_input['pay_to'] ?? ''          }}" type="number"  class="form-control input-sm" style="width: 110px" placeholder="To">
                     </th>
                     <th class="align-middle"><input  name="boss_name"       value="{{ $form_input['boss_name'] ?? ''        }}" type="text"    class="form-control input-sm"></th>
-                    <th class="align-middle"><button name="search"          value="1"                                           type="submit"  class="btn btn-default">Search</button></th>
+                    <th class="align-middle"><button type="submit"  class="btn btn-default">Search</button></th>
                     @foreach($form_url as $n_url=>$m_url)
                         <input type="hidden" name="{{$n_url}}" value="{{$m_url}}">
                     @endforeach
@@ -44,7 +44,7 @@
             <th scope="row">{{$row->id}}</th>
             <td>{{$row->full_name}}</td>
             <td>{{$row->position}}</td>
-            <td>{{$row->employment->format('d.m.Y')}}</td>
+            <td>{{$row->employment}}</td>
             <td>{{$row->pay}}$</td>
             <td colspan="2">{{$row->boss_name}}</td>
            </tr>
