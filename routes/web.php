@@ -17,3 +17,7 @@ Route::get('/', function () {
 
 Route::view('/table/ajax/','table-ajax')->name('staff.ajax');
 Route::get('/table/', 'StaffController@index')->name('staff');
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
