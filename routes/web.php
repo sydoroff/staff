@@ -15,9 +15,11 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::view('/table/ajax/','table-ajax')->name('staff.ajax');
+Route::view('/table/ajax/','table-ajax')->name('staff.ajax')->middleware('auth');
+Route::get('/api/table/', 'ApiController@table')->name('api.table')->middleware('auth');
+
 Route::get('/table/', 'StaffController@index')->name('staff');
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::redirect('/home', '/table/ajax/');
