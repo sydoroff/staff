@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Staff;
+use Intervention\Image\Facades\Image as ImageInt;
 
 class StaffController extends Controller
 {
@@ -24,7 +25,7 @@ class StaffController extends Controller
       $staff->fill($request->only($staff->getFillable()));
       $staff->save();
 
-      return redirect()->route('staff.create')->with('status', 'Save success! '.$request->get("full_name").' added.');
+      return redirect()->route('staff.edit',['id' => $staff->id])->with('status', 'Save success! '.$request->get("full_name").' added.');
     }
 
     public function edit($id){
@@ -50,6 +51,24 @@ class StaffController extends Controller
 
         return response()->json([
             'success' => 'Record deleted successfully!'
+        ]);
+    }
+
+    public function image(Request $request,$id){
+
+        $request->validate(['file' => 'file|image']);
+
+        $path =public_path().'\image\\';
+        $file = $request->file();
+
+        foreach ($file as $f) {
+            $img = ImageInt::make($f);
+            $img->resize(150,200)->save($path . 'b\\' . $id . '.jpg');
+            $img->resize(50,66)->save($path . 's\\' . $id . '.jpg');
+        }
+
+        return response()->json([
+            'url' => asset('image/b/' . $id . '.jpg')
         ]);
     }
 
