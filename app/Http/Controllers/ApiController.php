@@ -25,6 +25,24 @@ class ApiController extends Controller
         return Response::json($staff->toArray());
     }
 
+    public function nameTree(Request $request){
+
+        $request->validate([
+            'id' => 'required|integer',
+        ]);
+        $id = $request->get('id');
+        $staff=Staff::childTreeJS($id)->map(function ($item, $key){
+            return [
+                'id'=>$item->id,
+                'text'=> $item->full_name,
+                'children' => ($item->subject_count>0)
+            ];
+        });
+
+        return Response::json($staff->toArray());
+    }
+
+
     public function table(Request $request){
 
         $staff = new Staff();

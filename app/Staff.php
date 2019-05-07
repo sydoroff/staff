@@ -9,6 +9,8 @@ class Staff extends Model
 
     protected $hidden = ['created_at','updated_at'];
 
+    protected $fillable = ['full_name', 'position', 'employment', 'pay', 'up_num'];
+
     public function scopeMake_Search($query,$param)
     {
         foreach ($param as $row => $item)
@@ -49,6 +51,17 @@ class Staff extends Model
             'boss_name' => 'nullable|string|max:150',
             'sort'=>'in:id,full_name,position,employment,pay,boss_name',
             'set'=>'in:asc,desc',
+        ];
+    }
+
+
+    public function validSave(){
+        return [
+            'full_name' => 'required|max:155',
+            'position' => 'required|max:155',
+            'employment' => 'required|date|max:155',
+            'pay' => 'required|numeric',
+            'up_num' => 'required|numeric'
         ];
     }
 

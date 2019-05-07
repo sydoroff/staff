@@ -17,6 +17,7 @@ use Illuminate\Http\Request;
 
 
 Route::get('/home/', 'ApiController@home')->name('api.home');
+Route::get('/names/', 'ApiController@nameTree')->name('api.names');
 
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {

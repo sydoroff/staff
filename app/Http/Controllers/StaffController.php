@@ -8,6 +8,51 @@ use App\Staff;
 class StaffController extends Controller
 {
 
+    public function __construct()
+    {
+        $this->middleware('auth')->except(['index','iconAndUrl']);
+    }
+
+    public function create(){
+        return view('staff');
+    }
+
+    public function store(Request $request){
+
+      $staff = new Staff();
+      $request->validate($staff->validSave());
+      $staff->fill($request->only($staff->getFillable()));
+      $staff->save();
+
+      return redirect()->route('staff.create')->with('status', 'Save success! '.$request->get("full_name").' added.');
+    }
+
+    public function edit($id){
+
+        $staff = Staff::findOrFail($id);
+
+        return view('staff',['staff' => $staff]);
+    }
+
+    public function update(Request $request,$id){
+
+        $staff = Staff::findOrFail($id);
+        $request->validate($staff->validSave());
+        $staff->fill($request->only($staff->getFillable()));
+        $staff->save();
+
+        return redirect()->route('staff.edit',['id'=>$id])->with('status', 'Save success!');
+    }
+
+    public function destroy($id){
+
+        Staff::destroy($id);
+
+        return response()->json([
+            'success' => 'Record deleted successfully!'
+        ]);
+    }
+
     public function index(Request $request){
 
         $staff = new Staff();

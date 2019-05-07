@@ -20,12 +20,14 @@ function show_table( page = 1, sort = [] ){
     }).done(function( data ) {
         var items = [];
         $.each( data.data, function( key, val ) {
-            items.push( "<tr> <td>" + val.id + "</td>" +
+            items.push( "<tr id='st" + val.id + "'>"+
+                "<td><a href='/staff/"+ val.id +"/edit'>" + val.id + "</a></td>" +
                 "<td>" + val.full_name + "</td>" +
                 "<td>" + val.position + "</td>" +
                 "<td>" + val.employment + "</td>" +
                 "<td>" + val.pay + "</td>" +
-                "<td colspan='2'>" + (val.boss_name ? val.boss_name : ' - - - ' ) + "</td>" +
+                "<td>" + (val.boss_name ? val.boss_name : ' - - - ' ) + "</td>" +
+                "<td><button class=\"deleteRecord btn btn-danger btn-sm\" data-id=\""+val.id+"\" >Delete</button></td>"+
                 "</tr>" );
         });
 
@@ -47,8 +49,34 @@ function show_table( page = 1, sort = [] ){
             "class": "my-new-tbody",
             html: items.join( "" )
         }).appendTo( "table" );
+
+        render_del_link();
     });
 }
+
+function render_del_link() {
+    $(".deleteRecord").click(function(){
+
+        var id = $(this).data("id");
+        var token = $("meta[name='csrf-token']").attr("content");
+
+        if (confirm("Delete item: "+id+"?"))
+        $.ajax(
+            {
+                url: "/staff/"+id,
+                type: 'DELETE',
+                data: {
+                    "id": id,
+                    "_token": token,
+                },
+                success: function (){
+                    $('tr#st'+id).remove();
+                }
+            });
+
+    });
+}
+
 
 function render_pagination(data,ins){
 

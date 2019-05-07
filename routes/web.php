@@ -17,6 +17,11 @@ Route::get('/', function () {
 
 Route::view('/table/ajax/','table-ajax')->name('staff.ajax')->middleware('auth');
 Route::get('/api/table/', 'ApiController@table')->name('api.table')->middleware('auth');
+Route::resource('staff', 'StaffController',['except' => [
+                                    'index', 'show'
+                                        ]]);
+
+
 
 Route::get('/table/', 'StaffController@index')->name('staff');
 
