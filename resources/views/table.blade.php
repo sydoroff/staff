@@ -6,6 +6,7 @@
         <thead>
         <tr>
             <th scope="col"><a class="text-dark" href="{!!$sort['id']['url']        !!}"># {!! $sort['id']['ico'] !!}</a></th>
+            <th scope="col">Photo</th>
             <th scope="col"><a class="text-dark" href="{!!$sort['full_name']['url'] !!}">Name {!! $sort['full_name']['ico'] !!}</a></th>
             <th scope="col"><a class="text-dark" href="{!!$sort['position']['url']  !!}">Job Title {!! $sort['position']['ico'] !!}</a></th>
             <th scope="col"><a class="text-dark" href="{!!$sort['employment']['url']!!}">Start at {!! $sort['employment']['ico'] !!}</a></th>
@@ -21,6 +22,7 @@
                                              <input  name="id_from"         value="{{ $form_input['id_from'] ?? ''         }}" type="number"  class="form-control input-sm" style="width: 70px" placeholder="From">
                                              <input  name="id_to"           value="{{ $form_input['id_to'] ?? ''           }}" type="number"  class="form-control input-sm" style="width: 70px" placeholder="To">
                     </th>
+                    <th>&nbsp;</th>
                     <th class="align-middle"><input  name="full_name"       value="{{ $form_input['full_name'] ?? ''       }}" type="text"    class="form-control input-sm"></th>
                     <th class="align-middle"><input  name="position"        value="{{ $form_input['position'] ?? ''        }}" type="text"    class="form-control input-sm"></th>
                     <th class="align-middle">
@@ -42,6 +44,9 @@
           @foreach($staff as $row)
            <tr>
             <th scope="row">{{$row->id}}</th>
+            <td><img src="{{file_exists(public_path().'\image\s\\'.$row->id.'.jpg') ?
+                           asset('image/s/' . $row->id . '.jpg') :
+                           "/image/default_s.jpg" }}"></td>
             <td>{{$row->full_name}}</td>
             <td>{{$row->position}}</td>
             <td>{{$row->employment}}</td>

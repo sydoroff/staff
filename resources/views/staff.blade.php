@@ -14,7 +14,32 @@
             </div>
         @endif
 
-        <form action="{{!empty($staff->full_name) ? route('staff.update',['id'=>$staff->id]) : route('staff.store')}}" method="post">
+        @if (!empty($staff))
+                <div class="row">
+                    <div class="col">
+                        @if(file_exists(public_path().'\image\b\\'.$staff->id.'.jpg'))
+                            <img src="{{asset('image/b/' . $staff->id . '.jpg')}}" width="150" height="200" id="prof_img">
+                        @else
+                            <img src="/image/default_b.jpg" width="150" height="200" id="prof_img">
+                        @endif
+                    </div>
+                    <div class="col">
+                        <form action="#" method="post" enctype="multipart/form-data">
+                            @csrf
+                            <input type="file" name="file" class="form-control-file border" id="customFile">
+                            <button id="but_upload" value="{{route('staff.image',['id'=>$staff->id])}}"
+                                    class="btn btn-outline-primary" type="button" disabled>Save image</button>
+                        </form>
+
+                    </div>
+                </div>
+
+            <script src="/js/staff_image.js"></script>
+
+        <hr>
+        @endif
+
+        <form action="{{!empty($staff) ? route('staff.update',['id'=>$staff->id]) : route('staff.store')}}" method="post">
             @csrf
             {{!empty($staff->full_name) ? method_field('PUT') : '' }}
             <div class="form-group">

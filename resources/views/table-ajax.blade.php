@@ -6,6 +6,7 @@
         <thead>
         <tr>
             <th scope="col"><a id="id" class="text-dark" href="#"># </a></th>
+            <th scope="col">Photo</th>
             <th scope="col"><a id="full_name" class="text-dark" href="#">Name </a></th>
             <th scope="col"><a id="position" class="text-dark" href="#">Job Title </a></th>
             <th scope="col"><a id="employment" class="text-dark" href="#">Start at </a></th>
@@ -19,6 +20,7 @@
                     <input  name="id_from"         value="" type="number"  class="form-control input-sm" style="width: 70px" placeholder="From">
                     <input  name="id_to"           value="" type="number"  class="form-control input-sm" style="width: 70px" placeholder="To">
                 </th>
+                <th class="align-middle">&nbsp;</th>
                 <th class="align-middle">
                     <input  name="full_name"       value="" type="text"    class="form-control input-sm">
                 </th>

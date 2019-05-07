@@ -22,6 +22,7 @@ function show_table( page = 1, sort = [] ){
         $.each( data.data, function( key, val ) {
             items.push( "<tr id='st" + val.id + "'>"+
                 "<td><a href='/staff/"+ val.id +"/edit'>" + val.id + "</a></td>" +
+                "<td><img src='/image/loading_spinner.gif' onload=\"UrlExistsIMg(this,'/image/s/"+ val.id +".jpg')\" class='profPhoto' width='50' height='66'></td>" +
                 "<td>" + val.full_name + "</td>" +
                 "<td>" + val.position + "</td>" +
                 "<td>" + val.employment + "</td>" +
@@ -51,6 +52,7 @@ function show_table( page = 1, sort = [] ){
         }).appendTo( "table" );
 
         render_del_link();
+        render_prof_img();
     });
 }
 
@@ -136,4 +138,25 @@ function render_pagination(data,ins){
                     [{'name':'sort','value':data.search_sort_param.sort},{'name':'set','value':data.search_sort_param.set}]:
                     []));
             }}).appendTo(ins);}
+}
+
+function UrlExistsIMg(t,url)
+{
+
+  $.ajax({
+        url:url,
+        type:'HEAD',
+        error: function()
+        {
+            $(t).hide();
+       //     t.src='/image/default_s.jpg';
+       //     $(t).show();
+        },
+        success: function()
+        {
+            t.src=url;
+            $(t).show();
+        }
+    });
+    $(t).attr('onload',false);
 }

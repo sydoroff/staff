@@ -21,6 +21,8 @@ Route::resource('staff', 'StaffController',['except' => [
                                     'index', 'show'
                                         ]]);
 
+Route::post('/staff/image/{id}','StaffController@image')->where('id', '[0-9]+')->name('staff.image');
+
 
 
 Route::get('/table/', 'StaffController@index')->name('staff');
