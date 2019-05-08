@@ -11,6 +11,8 @@ class Staff extends Model
 
     protected $fillable = ['full_name', 'position', 'employment', 'pay', 'up_num'];
 
+    protected $appends = ['photo'];
+
     public function scopeMake_Search($query,$param)
     {
         foreach ($param as $row => $item)
@@ -90,6 +92,11 @@ class Staff extends Model
 
         return self::withCount('subject')->where('up_num',$id)->get();
 
+    }
+
+    public function getPhotoAttribute()
+    {
+        return file_exists(public_path().'\image\s\\'.$this->id.'.jpg');
     }
 
 }
