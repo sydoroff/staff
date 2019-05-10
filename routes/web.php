@@ -22,6 +22,8 @@ Route::resource('staff', 'StaffController',['except' => [
                                         ]]);
 
 Route::post('/staff/image/{id}','StaffController@image')->where('id', '[0-9]+')->name('staff.image');
+Route::post('/staff/subordinate/','StaffController@subordinate')->name('staff.subordinate');
+
 
 
 

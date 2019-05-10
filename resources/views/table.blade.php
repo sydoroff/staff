@@ -44,7 +44,7 @@
           @foreach($staff as $row)
            <tr>
             <th scope="row">{{$row->id}}</th>
-            <td><img src="{{file_exists(public_path().'\image\s\\'.$row->id.'.jpg') ?
+            <td><img src="{{$row->photo ?
                            asset('image/s/' . $row->id . '.jpg') :
                            "/image/default_s.jpg" }}"></td>
             <td>{{$row->full_name}}</td>

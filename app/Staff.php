@@ -1,16 +1,10 @@
 <?php
-
 namespace App;
-
 use Illuminate\Database\Eloquent\Model;
-
 class Staff extends Model
 {
-
     protected $hidden = ['created_at','updated_at'];
-
     protected $fillable = ['full_name', 'position', 'employment', 'pay', 'up_num'];
-
     protected $appends = ['photo'];
 
     public function scopeMake_Search($query,$param)
@@ -24,7 +18,7 @@ class Staff extends Model
             if (in_array($row,['id_from','employment_from','pay_from'])&&!empty(trim($item))){
                 $query = $query->where('staff.'.str_replace('_from','',$row), '>', $item);
             }
-            if (in_array($row,['id_to','employment_to','pay_to'])&&!empty(trim($item))>1){
+            if (in_array($row,['id_to','employment_to','pay_to'])&&!empty(trim($item))){
                 $query = $query->where('staff.'.str_replace('_to','',$row), '<',$item);
             }
         }
@@ -35,7 +29,6 @@ class Staff extends Model
     {
         if (isset($param['sort'])&&isset($param['set']))
             $query = $query->orderBy('staff.'.$param['sort'],$param['set']);
-
         return $query;
     }
 
@@ -56,7 +49,6 @@ class Staff extends Model
         ];
     }
 
-
     public function validSave(){
         return [
             'full_name' => 'required|max:155',
@@ -66,7 +58,6 @@ class Staff extends Model
             'up_num' => 'required|numeric'
         ];
     }
-
 
     /**
      * @return App/Staff Возвращает начальника
@@ -89,14 +80,42 @@ class Staff extends Model
      * @return App/Staff с числом подчененных.
      */
     static function childTreeJS($id){
-
         return self::withCount('subject')->where('up_num',$id)->get();
-
     }
 
     public function getPhotoAttribute()
     {
         return file_exists(public_path().'\image\s\\'.$this->id.'.jpg');
     }
+
+    public function getBranchAttribute()
+    {
+
+        if ($this->up_num==0) return collect([]);
+
+        $staff = $this->boss()->get();
+
+        while($staff[$staff->count()-1]->up_num>0){
+            $col = $staff[$staff->count()-1]->boss()->get();
+            $staff->push($col[0]);
+        }
+
+        $staff = $staff->reverse();
+
+        return $staff;
+    }
+
+    public function inBranch($id){
+
+        if ($this->id==$id) return false;
+
+        $branch = self::find($id)->branch->map(function ($item, $key) {
+            return $item->id;
+        });
+
+        return is_int($branch->search($id));
+
+    }
+
 
 }

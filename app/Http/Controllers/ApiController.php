@@ -25,6 +25,12 @@ class ApiController extends Controller
         return Response::json($staff->toArray());
     }
 
+    public function worker($id){
+        $staff = Staff::with('subject')->findOrFail($id);
+
+        return Response::json($staff->toArray());
+    }
+
     public function nameTree(Request $request){
 
         $request->validate([

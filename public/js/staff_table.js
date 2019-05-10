@@ -52,7 +52,6 @@ function show_table( page = 1, sort = [] ){
         }).appendTo( "table" );
 
         render_del_link();
-        render_prof_img();
     });
 }
 function render_prof_photo(id,param){
@@ -70,8 +69,41 @@ function render_del_link() {
 
         var id = $(this).data("id");
         var token = $("meta[name='csrf-token']").attr("content");
+        var worker;
 
-        if (confirm("Delete item: "+id+"?"))
+
+        $(this).attr('disabled',true);
+
+        $.ajax(
+            {
+                url: "/api/worker/"+id,
+                type: 'GET',
+                success: function (data){
+                    worker = data;
+                }
+                ,
+                error: function (xhr, ajaxOptions, thrownError){
+                    alert(xhr.status);
+                    alert(thrownError);
+                },
+                async: false
+            });
+
+        var message="Delete item: "+worker.full_name+"?\n";
+
+        if (worker.subject.length>0){
+            message = message + 'This workers:\n';
+                $.each(worker.subject, function( key, val ) {
+                    message = message + '- '+ val.full_name + '\n';
+                });
+            if (worker.up_num>0){
+                message = message + '=> Subordinate moving to '+ worker.boss_name;
+            }else{
+                message = message + '=> Makes CEO';
+            }
+        }
+
+        if (confirm(message)){
         $.ajax(
             {
                 url: "/staff/"+id,
@@ -82,8 +114,14 @@ function render_del_link() {
                 },
                 success: function (){
                     $('tr#st'+id).remove();
+                },
+                error: function (xhr, ajaxOptions, thrownError){
+                    alert(xhr.status);
+                    alert(thrownError);
                 }
-            });
+            });}else{
+            $(this).attr('disabled',false);
+        }
 
     });
 }

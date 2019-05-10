@@ -8,29 +8,37 @@
 
     <div class="container">
 
+        @include('branch')
+
         @if (session('status'))
             <div class="alert alert-success">
                 {{ session('status') }}
             </div>
         @endif
 
+        @if (session('error'))
+            <div class="alert alert-danger">
+                {{ session('error') }}
+            </div>
+        @endif
+
         @if (!empty($staff))
-                <div class="row">
-                    <div class="col">
-                        @if(file_exists(public_path().'\image\b\\'.$staff->id.'.jpg'))
-                            <img src="{{asset('image/b/' . $staff->id . '.jpg')}}" width="150" height="200" id="prof_img">
+                <div class="card">
+                    <div class="card-header">Change photo</div>
+                    <div class="card-body">
+                        @if($staff->photo)
+                            <img src="{{asset('image/b/' . $staff->id . '.jpg')}}" class="img-thumbnail" width="150" height="200" id="prof_img">
                         @else
                             <img src="/image/default_b.jpg" width="150" height="200" id="prof_img">
                         @endif
                     </div>
-                    <div class="col">
+                    <div class="card-footer">
                         <form action="#" method="post" enctype="multipart/form-data">
                             @csrf
                             <input type="file" name="file" class="form-control-file border" id="customFile">
                             <button id="but_upload" value="{{route('staff.image',['id'=>$staff->id])}}"
                                     class="btn btn-outline-primary" type="button" disabled>Save image</button>
                         </form>
-
                     </div>
                 </div>
 
@@ -39,6 +47,9 @@
         <hr>
         @endif
 
+    <div class="card">
+        <div class="card-header">{{!empty($staff) ? "Change main info" : "New worker"}}</div>
+        <div class="card-body">
         <form action="{{!empty($staff) ? route('staff.update',['id'=>$staff->id]) : route('staff.store')}}" method="post">
             @csrf
             {{!empty($staff->full_name) ? method_field('PUT') : '' }}
@@ -65,7 +76,8 @@
                 <input type="text" class="form-control" id="boss_name" value="{{!empty($staff->boss_name) ? $staff->boss_name : 'none - CEO'}}" readonly>
                 <input type="hidden" class="form-control" name="up_num" id="up_num" value="{{!empty($staff->up_num) ? $staff->up_num : '0'}}">
                 <div class="input-group-append">
-                    <button class="btn btn-outline-primary" type="button" data-toggle="modal" data-target="#myModal">Select</button>
+                    <button class="btn btn-outline-primary" type="button" data-toggle="modal" data-target="#myModal"
+                            onclick="{{!empty($staff) ? "tree_init(".$staff->id.",true, '".route('api.names')."')" : "tree_init(0,false, '".route('api.names')."')"}};boss_tree();">Select</button>
                 </div>
                 <div class="input-group-append">
                     <button class="btn btn-outline-primary" type="button" onclick="$('#up_num').val(0);$('#boss_name').val('none - CEO');">CEO</button>
@@ -74,6 +86,41 @@
 
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>
+        </div>
+    </div>
+
+        <hr>
+        @if (!empty($staff))
+        @if(count($staff->subject)>0)
+           <div class="card">
+               <div class="card-header">Change subordinate</div>
+               <div class="card-body">
+                    <form id="subForm" action="{{route('staff.subordinate')}}" method="post" >
+                        @csrf
+                            @foreach($staff->subject as $row)
+                                    <div class="form-check">
+                                        <label class="form-check-label">
+                                            <input type="checkbox" name="subject[]" class="form-check-input" value="{{$row->id}}">
+                                            <a href="{{route('staff.edit',['id'=>$row->id])}}">{{$row->full_name}}</a>
+                                            @if (session('new'))
+                                                @if(in_array($row->id,session('new')))
+                                                    <sup><span class="badge badge-pill badge-success">New</span></sup>
+                                                @endif
+                                            @endif
+                                        </label>
+                                    </div>
+                            @endforeach
+                        <input type="hidden" name="up_num" id="forwardUpNum">
+                        <br>
+                        <button type="button" class="btn btn-primary" onclick="tree_init(0,false,'{{route('api.names')}}');sub_tree(event);">Forward</button>
+                    </form>
+               </div>
+           </div>
+        @endif
+        @endif
+
+
+
     </div>
 
     <div class="modal" id="myModal">
@@ -82,44 +129,21 @@
 
                 <!-- Modal Header -->
                 <div class="modal-header">
-                    <h4 class="modal-title">Modal Heading</h4>
+                    <h4 class="modal-title">Select worker</h4>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
 
                 <!-- Modal body -->
-                <div class="modal-body">
+                <div class="modal-body" id="modal-body">
                     <div id="tree">
                     </div>
-                    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jstree/3.3.7/themes/default/style.min.css" />
-                    <script src="//cdnjs.cloudflare.com/ajax/libs/jstree/3.3.7/jstree.min.js"></script>
-                    <script>
-                        $(function() {
-                            $('#tree').jstree({
-                                'core' : {
-                                    'data' : {
-                                        "url" : "{{route('api.names')}}",
-                                        "data" : function (node) {
-                                            if (node.id!='#')
-                                                return { "id" : node.id };
-                                            else
-                                                return { 'id' : 0};
-                                        }
-                                    }
-                                }
-                            });
-                        });
 
-                        $("#tree").on("select_node.jstree",
-                            function(evt, data){
-                                $("#up_num").val(data.node.id);
-                                $("#boss_name").val(data.node.text);
-                                $("#myModal").modal('hide');
-                            }
-                        );
-                    </script>
                 </div>
             </div>
         </div>
     </div>
 
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jstree/3.3.7/themes/default/style.min.css" />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jstree/3.3.7/jstree.min.js"></script>
+    <script src="/js/staff_edit.js"></script>
 @endsection
