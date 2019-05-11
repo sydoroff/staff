@@ -13,13 +13,16 @@ class ApiController extends Controller
         $request->validate([
             'id' => 'required|integer',
         ]);
-        $id = $request->get('id');
-        $staff=Staff::childTreeJS($id)->map(function ($item, $key){
-            return [
-                'id'=>$item->id,
-                'text'=> view('tree-item',['item' => $item])->render(),
-                'children' => ($item->subject_count>0)
-            ];
+
+        $staff=Staff::withCount('subject')
+            ->where('up_num',$request->get('id'))
+            ->get()
+            ->map(function ($item, $key){
+                   return  [
+                       'id'=>$item->id,
+                       'text'=> view('tree-item',['item' => $item])->render(),
+                       'children' => ($item->subject_count>0)
+                   ];
         });
 
         return Response::json($staff->toArray());
@@ -36,8 +39,10 @@ class ApiController extends Controller
         $request->validate([
             'id' => 'required|integer',
         ]);
-        $id = $request->get('id');
-        $staff=Staff::childTreeJS($id)->map(function ($item, $key){
+
+        $staff=Staff::where('up_num',$request->get('id'))
+            ->get()
+            ->map(function ($item, $key){
             return [
                 'id'=>$item->id,
                 'text'=> $item->full_name,

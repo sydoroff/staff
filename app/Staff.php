@@ -75,14 +75,6 @@ class Staff extends Model
         return $this->hasMany(self::class, 'up_num', 'id');
     }
 
-    /**
-     * @param $id - начальник
-     * @return App/Staff с числом подчененных.
-     */
-    static function childTreeJS($id){
-        return self::withCount('subject')->where('up_num',$id)->get();
-    }
-
     public function getPhotoAttribute()
     {
         return file_exists(public_path().'\image\s\\'.$this->id.'.jpg');

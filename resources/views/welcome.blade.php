@@ -21,7 +21,15 @@
                         }
                     }
                 }
-            });
+            }).on("load_node.jstree",
+                function(evt, data){
+                    var myTree = this
+                    if(data.node.parents.length%2==0)
+                        $.each(data.node.children,function( key, value ){
+                            $(myTree).jstree(true).toggle_node(value);
+                        });
+                }
+            );
         });
     </script>
 @endsection
