@@ -19,17 +19,29 @@
                             else
                                 return { 'id' : 0};
                         }
-                    }
-                }
-            }).on("load_node.jstree",
-                function(evt, data){
-                    var myTree = this
-                    if(data.node.parents.length%2==0)
-                        $.each(data.node.children,function( key, value ){
-                            $(myTree).jstree(true).toggle_node(value);
-                        });
-                }
-            );
+                    },
+                    "check_callback" : true
+                },
+                plugins : ['dnd']
+            });
+
+            var token = $("meta[name='csrf-token']").attr("content");
+
+            $(document).on({
+                'dnd_stop.vakata':
+                    function(evt, data){
+                        node = data.data.origin.get_node(data.data.nodes[0]);
+                        (node.parent == '#') ? parent = '0' : parent = node.parent;
+                        $.post( "{{route('api.staff.move')}}", { 'id': node.id, 'up_num': parent, "_token": token })
+                            .fail(function() {
+                                alert( "Error" );
+                                $('#tree').jstree(true).refresh();
+                            })
+                            .done(function() {
+                                alert( "Save success" );
+                            });
+                        }
+            });
         });
     </script>
 @endsection

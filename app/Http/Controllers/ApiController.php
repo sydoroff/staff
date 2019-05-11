@@ -14,14 +14,21 @@ class ApiController extends Controller
             'id' => 'required|integer',
         ]);
 
-        $staff=Staff::withCount('subject')
+        $staff=Staff::with('subject','subject.subject')
             ->where('up_num',$request->get('id'))
             ->get()
             ->map(function ($item, $key){
+                $arr = $item->subject->map(function ($item, $key){
+                           return  [
+                               'id'=>$item->id,
+                               'text'=> view('tree-item',['item' => $item])->render(),
+                               'children' => ($item->subject->count()>0)
+                           ];
+                        })->toArray();
                    return  [
                        'id'=>$item->id,
                        'text'=> view('tree-item',['item' => $item])->render(),
-                       'children' => ($item->subject_count>0)
+                       'children' => $arr
                    ];
         });
 
@@ -40,7 +47,8 @@ class ApiController extends Controller
             'id' => 'required|integer',
         ]);
 
-        $staff=Staff::where('up_num',$request->get('id'))
+        $staff=Staff::withCount('subject')
+            ->where('up_num',$request->get('id'))
             ->get()
             ->map(function ($item, $key){
             return [
@@ -67,7 +75,26 @@ class ApiController extends Controller
         $staff = $staff->appends($request->except(['page']));
         $staff = $staff->toArray();
         $staff['search_sort_param'] = $request->except(['page']);
-      // dd( $request->except(['page']));
+
         return  Response::json($staff);
+    }
+
+    public function move(Request $request){
+        $request->validate([
+            'id' => 'required|integer',
+            'up_num' => 'required|integer',
+        ]);
+
+        $staff = Staff::findOrFail($request->get('id'));
+
+        if($staff->inBranch($request->get('up_num'))) abort(404);
+
+        $staff->up_num = $request->get('up_num');
+        $staff = $staff->save();
+
+        if ($staff)
+            return  Response::json($staff,200);
+        else
+            abort(404);
     }
 }
